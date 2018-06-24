@@ -1,14 +1,11 @@
 Page({
-  data:{
-    bujin:"10cm"
-  },
   onReady: function () {
     var res = wx.getSystemInfoSync();
     var maxWidth = res.windowWidth;
     var maxHeight = res.screenHeight;
-    console.log(maxWidth + " * " + maxHeight + " - " + res.pixelRatio + " - " + res.model)
-    var context = wx.createCanvasContext('ruler');
     var onemm = this.onGetOnecmPxiel(res);
+    console.log(maxWidth + " * " + maxHeight + " - " + res.pixelRatio + " - " + res.model + " - " + onemm)
+    var context = wx.createCanvasContext('ruler');
     this.onDrawRuler(context, 10, maxHeight, onemm, 0, 10, true);
     this.onDrawRuler(context, 10, maxHeight, onemm, maxWidth - 10, maxWidth, false);
     context.draw()
@@ -36,21 +33,20 @@ Page({
   },
   // 计算一毫米等于多少px，然后以一毫米的px递增
   onGetOnecmPxiel: function (res) {
-    var num = 5.2;
-    if (res.model == 'iPhone 6 Plus') {
-      num = 5.9;
-    } else if (res.model == 'iPhone 6') {
-      num = 5.8;
-    } else if(res.model == 'iPhone 7' || res.model == 'iPhone 8'){
-      num = 6.0; 
-    } else if (res.model == 'iPhone 7 Plus' || res.model == 'iPhone 8 Plus'){
-      num = 6.1
-    } else if (res.model == 'iPhone 5'){
-      num = 6.2; 
-    } else if (res.model == 'OD105'){
-      num = 5.3;
+    var num = this.data[res.model];
+    if (!num){
+      num = 5.2;
     }
-    console.log("mun - "+num);
     return num;
+  },
+  data: {
+    "iPhone 5": 5.4,
+    "iPhone 6": 5.8,
+    "iPhone 6 Plus": 5.9,
+    "iPhone 7": 6.0,
+    "iPhone 7 Plus": 6.1,
+    "iPhone 8": 6.0,
+    "iPhone 8 Plus": 6.1,
+    "OD105": 5.3
   }
 });
