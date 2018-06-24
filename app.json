@@ -1,0 +1,7 @@
+{
+  "pages":["index"],
+  "window":{    
+    "navigationBarBackgroundColor": "#848484",
+    "navigationBarTitleText": "尺子"
+  }
+}
