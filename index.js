@@ -1,4 +1,7 @@
 Page({
+  data:{
+    bujin:"10cm"
+  },
   onReady: function () {
     var res = wx.getSystemInfoSync();
     var maxWidth = res.windowWidth;
@@ -35,15 +38,15 @@ Page({
   onGetOnecmPxiel: function (res) {
     var num = 5.2;
     if (res.model == 'iPhone 6 Plus') {
-      num = 5.3;
+      num = 5.9;
     } else if (res.model == 'iPhone 6') {
-      num = 6.0;
+      num = 5.8;
     } else if(res.model == 'iPhone 7' || res.model == 'iPhone 8'){
-      num = 6.4; 
+      num = 6.0; 
     } else if (res.model == 'iPhone 7 Plus' || res.model == 'iPhone 8 Plus'){
       num = 6.1
     } else if (res.model == 'iPhone 5'){
-      num = 6.6; 
+      num = 6.2; 
     } else if (res.model == 'OD105'){
       num = 5.3;
     }
