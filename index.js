@@ -39,7 +39,7 @@ Page({
     }
     var num = this.data[modal];
     if (!num){
-      num = 5.2;
+      num = 5.5;
     }
     return num;
   },
