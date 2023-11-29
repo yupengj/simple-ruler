@@ -11,41 +11,19 @@ Page({
       console.log(window)
       var ppi = this.estimatePPI(window)
       var dpr = window.pixelRatio
-      const ratio = ppi / dpr / 96; // 和显示长度的倍数相差
       var mmOfCount = (ppi/25.4).toFixed(3)// 1 毫米有几个像素
-      console.log(ppi+"--"+dpr+"--"+mmOfCount+"--"+ratio)
- 
-      var aa = this.estimatePPI2(window)
-      console.log(aa)
+      console.log(ppi+"--"+dpr+"--"+mmOfCount)
 
       // 设置Canvas的实际大小
       canvas.width = result[0].width * dpr;
       canvas.height = result[0].height * dpr;
-      // context.scale(dpr, dpr);
+      context.scale(dpr, dpr);
 
-      // 设置正方形的边长
-      var sideLength = 10*ratio;  // 10厘米
-      console.log(sideLength)
+      var th = 20*mmOfCount/dpr;
+      context.moveTo(10, 10)
+      context.lineTo(10, 10+th)
+      context.stroke();
 
-      // 设置正方形的起始坐标
-      var x = 30;
-      var y = 30;
-
-      // // 设置正方形的边框颜色
-      // context.strokeStyle = 'black';
-
-      // 绘制正方形
-      context.strokeRect(x, y, sideLength, sideLength);
-
-      // console.log(";;;;"+dpr)
-      // var maxWidth = result[0].width * dpr;
-      // var maxHeight = result[0].height * dpr
-
-      // const canvas = result[0].node
-      // canvas.width = maxWidth
-      // canvas.height = maxHeight
-
-      // const context = canvas.getContext('2d')
       // context.scale(dpr, dpr); // 缩放Canvas
 
       // context.font = "20px serif";
@@ -90,11 +68,4 @@ Page({
 
     return estimatedPPI;
   },
-
-  estimatePPI2: function(window){
-    var ppi = (96 * window.pixelRatio) / 100
-    var dpi = Math.round(96 * ppi)
-    var distanceInInches = 4
-    return distanceInInches* dpi
-  }
 });
