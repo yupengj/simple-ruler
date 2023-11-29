@@ -1,14 +1,57 @@
 Page({
   onReady: function () {
-    var res = wx.getSystemInfoSync();
-    var maxWidth = res.windowWidth;
-    var maxHeight = res.screenHeight;
-    var onemm = this.onGetOnecmPxiel(res);
-    console.log(maxWidth + " * " + maxHeight + " - " + res.pixelRatio + " - " + res.model + " - " + onemm)
-    var context = wx.createCanvasContext('ruler');
-    this.onDrawRuler(context, 10, maxHeight, onemm, 0, 10, true);
-    this.onDrawRuler(context, 10, maxHeight, onemm, maxWidth - 10, maxWidth, false);
-    context.draw()
+    var query = wx.createSelectorQuery();
+    query.select('#ruler')
+    .fields({ node: true, size: true })
+    .exec((result)=>{
+      const canvas = result[0].node
+      const context = canvas.getContext('2d')
+
+      var window = wx.getSystemInfoSync();
+      console.log(window)
+      var ppi = this.estimatePPI(window)
+      var dpr = window.pixelRatio
+      const ratio = ppi / dpr / 96; // 和显示长度的倍数相差
+      var mmOfCount = (ppi/25.4).toFixed(3)// 1 毫米有几个像素
+      console.log(ppi+"--"+dpr+"--"+mmOfCount+"--"+ratio)
+ 
+      var aa = this.estimatePPI2(window)
+      console.log(aa)
+
+      // 设置Canvas的实际大小
+      canvas.width = result[0].width * dpr;
+      canvas.height = result[0].height * dpr;
+      // context.scale(dpr, dpr);
+
+      // 设置正方形的边长
+      var sideLength = 10*ratio;  // 10厘米
+      console.log(sideLength)
+
+      // 设置正方形的起始坐标
+      var x = 30;
+      var y = 30;
+
+      // // 设置正方形的边框颜色
+      // context.strokeStyle = 'black';
+
+      // 绘制正方形
+      context.strokeRect(x, y, sideLength, sideLength);
+
+      // console.log(";;;;"+dpr)
+      // var maxWidth = result[0].width * dpr;
+      // var maxHeight = result[0].height * dpr
+
+      // const canvas = result[0].node
+      // canvas.width = maxWidth
+      // canvas.height = maxHeight
+
+      // const context = canvas.getContext('2d')
+      // context.scale(dpr, dpr); // 缩放Canvas
+
+      // context.font = "20px serif";
+      // this.onDrawRuler(context, 10, maxHeight, 5, 0, 10, true);
+      // this.onDrawRuler(context, 10, maxHeight, 5, maxWidth - 10, maxWidth, false);
+    });
   },
   onDrawRuler: function (context, start, end, onemm, lineStart, lineEnd, isLeft) {
     var conunt = 0;
@@ -24,39 +67,34 @@ Page({
       }
       var tempLineStart = isLeft ? lineStart : lineStart - temp;
       var tempLineEnd = isLeft ? lineEnd + temp : lineEnd;
-      context.setFontSize(10)
       context.moveTo(tempLineStart, i)
       context.lineTo(tempLineEnd, i)
       context.stroke();
       conunt++
     }
   },
-  // 计算一毫米等于多少px，然后以一毫米的px递增
-  onGetOnecmPxiel: function (res) {
-    var modal = res.model;
-    if (modal.indexOf("<") != -1){
-      modal = modal.substring(0, modal.indexOf("<"))
-    }
-    var num = this.data[modal];
-    if (!num){
-      num = 5.5;
-    }
-    return num;
+
+  estimatePPI: function(window) {
+    // 获取设备像素比例
+    var pixelRatio = window.pixelRatio || 1;
+
+    // 获取屏幕分辨率
+    var screenWidth = window.screenWidth * pixelRatio;
+    var screenHeight = window.screenHeight * pixelRatio;
+
+    // 获取屏幕尺寸（以英寸为单位）
+    var screenInches = Math.sqrt(screenWidth ** 2 + screenHeight ** 2) / window.pixelRatio / 96; // 1英寸=96 CSS像素
+    console.log("screenInches",screenInches)
+    // 估算PPI
+    var estimatedPPI = Math.sqrt(screenWidth ** 2 + screenHeight ** 2) / screenInches;
+
+    return estimatedPPI;
   },
-  data: {
-    "iPhone 5": 6.4,
-    "iPhone SE": 6.4,// v
-    "iPhone 6": 6.0,
-    "iPhone 6 Plus": 6.1,
-    "iPhone 6s": 6.0,
-    "iPhone 6s Plus": 6.1,// v
-    "iPhone 7": 6.0,
-    "iPhone 7 Plus": 6.1,
-    "iPhone 8": 6.0,
-    "iPhone 8 Plus": 6.1,
-    "OD105": 5.3,// 坚果pro v
-    "OS105": 6.36,// 坚果pro2 v
-    "SM-G9500":5.65, // 三星 95v v
-    "BKL-AL20":5.34 // 荣耀V10 v
+
+  estimatePPI2: function(window){
+    var ppi = (96 * window.pixelRatio) / 100
+    var dpi = Math.round(96 * ppi)
+    var distanceInInches = 4
+    return distanceInInches* dpi
   }
 });
